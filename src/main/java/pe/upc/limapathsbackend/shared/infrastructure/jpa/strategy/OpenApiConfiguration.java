@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfiguration {
 
     @Bean
-    public OpenAPI customOpenAPI() {
+    public OpenAPI securityOpenAPI() {
         OpenAPI openAPI = new OpenAPI()
                 .info(new Info()
                         .title("LimaPaths Backend API")
@@ -36,13 +36,6 @@ public class OpenApiConfiguration {
         openAPI.addServersItem(server);
         return openAPI;
     }
-
-    /**
-     * Determina si la aplicación está corriendo en producción.
-     * Basado en la variable de entorno `RAILWAY_ENVIRONMENT`.
-     *
-     * @return true si estamos en producción, false si estamos en desarrollo.
-     */
     private boolean isProductionEnvironment() {
         String railwayEnv = System.getenv("RAILWAY_ENVIRONMENT");
         return railwayEnv != null && !railwayEnv.isEmpty();

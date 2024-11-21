@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import pe.upc.limapathsbackend.iam.domain.model.entities.Role;
 import pe.upc.limapathsbackend.shared.domain.model.aggregate.AuditableAbstractAggregateRoot;
-import pe.upc.limapathsbackend.iam.domain.model.entities.Role;
-import pe.upc.limapathsbackend.shared.domain.model.aggregate.AuditableAbstractAggregateRoot;
 
 import java.util.HashSet;
 import java.util.List;
@@ -51,9 +49,5 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     public User addRoles(List<Role> roles) {
         this.roles.addAll(roles);
         return this;
-    }
-
-    public String getHashedPassword() {
-        return password;
     }
 }

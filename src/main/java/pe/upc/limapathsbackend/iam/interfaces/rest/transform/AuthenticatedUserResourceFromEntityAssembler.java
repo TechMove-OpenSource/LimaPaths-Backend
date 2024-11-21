@@ -7,12 +7,9 @@ import pe.upc.limapathsbackend.iam.interfaces.rest.resources.AuthenticatedUserRe
 
 public class AuthenticatedUserResourceFromEntityAssembler {
 
-    public static AuthenticatedUserResource toResourceFromEntity(ImmutablePair<User, String> authenticatedUser) {
-        var user = authenticatedUser.getLeft(); // Obtener el User
-        var token = authenticatedUser.getRight(); // Obtener el token (String)
-        var roles = user.getRoles().stream().map(Role::getStringName).toList();
-        return new AuthenticatedUserResource(user.getId(), user.getUsername(), roles, token);
+    public static AuthenticatedUserResource toResourceFromEntity(User user, String token){
+        return new AuthenticatedUserResource(user.getId(), user.getUsername(), token);
     }
-
 }
+
 

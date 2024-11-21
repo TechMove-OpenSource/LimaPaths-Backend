@@ -2,5 +2,5 @@ package pe.upc.limapathsbackend.iam.interfaces.rest.resources;
 
 import java.util.List;
 
-public record UserResource(Long id, String username, List<String> roles, String hashedPassword) {
+public record UserResource(Long id, String username, List<String> roles) {
 }

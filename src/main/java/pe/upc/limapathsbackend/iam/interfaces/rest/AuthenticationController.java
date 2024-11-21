@@ -10,10 +10,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pe.upc.limapathsbackend.iam.domain.services.UserCommandService;
+import pe.upc.limapathsbackend.iam.interfaces.rest.resources.AuthenticatedUserResource;
+import pe.upc.limapathsbackend.iam.interfaces.rest.resources.SignInResource;
 import pe.upc.limapathsbackend.iam.interfaces.rest.resources.UserResource;
 import pe.upc.limapathsbackend.iam.interfaces.rest.resources.SignUpResource;
+import pe.upc.limapathsbackend.iam.interfaces.rest.transform.AuthenticatedUserResourceFromEntityAssembler;
+import pe.upc.limapathsbackend.iam.interfaces.rest.transform.SignInCommandFromResourceAssembler;
 import pe.upc.limapathsbackend.iam.interfaces.rest.transform.SignUpCommandFromResourceAssembler;
 import pe.upc.limapathsbackend.iam.interfaces.rest.transform.UserResourceFromEntityAssembler;
+
 
 @RestController
 @RequestMapping(value = "/api/v1/authentication", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -25,31 +30,40 @@ public class AuthenticationController {
         this.userCommandService = userCommandService;
     }
 
+    /**
+     * Handles the sign-in request.
+     * @param signInResource the sign-in request body.
+     * @return the authenticated user resource.
+     */
+    @PostMapping("/sign-in")
+    public ResponseEntity<AuthenticatedUserResource> signIn(@RequestBody SignInResource signInResource) {
+        var signInCommand = SignInCommandFromResourceAssembler.toCommandFromResource(signInResource);
+
+        var authenticatedUser = userCommandService.handle(signInCommand);
+        if (authenticatedUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var authenticatedUserResource = AuthenticatedUserResourceFromEntityAssembler.toResourceFromEntity(authenticatedUser.get().getLeft(), authenticatedUser.get().getRight());
+        return ResponseEntity.ok(authenticatedUserResource);
+    }
+
+    /**
+     * Handles the sign-up request.
+     * @param signUpResource the sign-up request body.
+     * @return the created user resource.
+     */
     @PostMapping("/sign-up")
     public ResponseEntity<UserResource> signUp(@RequestBody SignUpResource signUpResource) {
-        // Cifrar la contraseña utilizando BCrypt
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encryptedPassword = passwordEncoder.encode(signUpResource.password());
-
-        // Crear un nuevo recurso SignUpResource con la contraseña cifrada
-        var updatedSignUpResource = new SignUpResource(signUpResource.username(), encryptedPassword, signUpResource.roles());
-
-        // Convertir el recurso a un comando de sign-up
-        var signUpCommand = SignUpCommandFromResourceAssembler.toCommandFromResource(updatedSignUpResource);
-
-        // Procesar el comando de sign-up
+        var signUpCommand = SignUpCommandFromResourceAssembler.toCommandFromResource(signUpResource);
         var user = userCommandService.handle(signUpCommand);
 
-        // Si no se puede crear el usuario, devolver un error 400
         if (user.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
-        // Convertir el usuario a un recurso para la respuesta
         var userResource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());
 
-        // Devolver la respuesta con código 201 y el recurso de usuario
         return new ResponseEntity<>(userResource, HttpStatus.CREATED);
     }
-
 }

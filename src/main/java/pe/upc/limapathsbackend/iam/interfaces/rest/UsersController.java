@@ -15,7 +15,6 @@ import pe.upc.limapathsbackend.iam.interfaces.rest.transform.UserResourceFromEnt
 
 import java.util.List;
 
-
 /**
  * This class is a REST controller that exposes the users resource.
  * It includes the following operations:

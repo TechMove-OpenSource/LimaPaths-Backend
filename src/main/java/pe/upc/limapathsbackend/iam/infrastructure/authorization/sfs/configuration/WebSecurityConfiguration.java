@@ -26,7 +26,6 @@ import pe.upc.limapathsbackend.iam.infrastructure.tokens.jwt.BearerTokenService;
 
 import java.util.List;
 
-
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfiguration {
@@ -114,10 +113,6 @@ public class WebSecurityConfiguration {
                                 "/webjars/**"
                         ).permitAll()
                         .anyRequest().authenticated());
-
-        if (isProductionEnvironment()) {
-            http.requiresChannel(channel -> channel.anyRequest().requiresSecure()); // Forzar HTTPS
-        }
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authorizationRequestFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -1,4 +1,4 @@
 package pe.upc.limapathsbackend.payment.domain.model.queries;
 
-public record GetPaymentByBusNameQuery(String busName) {
+public record GetAllPaymentsQuery() {
 }

@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.upc.limapathsbackend.payment.domain.model.aggregates.Payment;
+import pe.upc.limapathsbackend.payment.domain.model.queries.GetAllPaymentsQuery;
 import pe.upc.limapathsbackend.payment.domain.model.queries.GetPaymentByIdQuery;
 import pe.upc.limapathsbackend.payment.domain.services.PaymentCommandService;
 import pe.upc.limapathsbackend.payment.domain.services.PaymentQueryService;
@@ -12,6 +14,8 @@ import pe.upc.limapathsbackend.payment.interfaces.rest.resources.CreatePaymentRe
 import pe.upc.limapathsbackend.payment.interfaces.rest.resources.PaymentResource;
 import pe.upc.limapathsbackend.payment.interfaces.rest.transform.CreatePaymentCommandFromResourceAssembler;
 import pe.upc.limapathsbackend.payment.interfaces.rest.transform.PaymentResourceFromEntityAssembler;
+
+import java.util.List;
 
 /*
     PaymentController
@@ -21,7 +25,7 @@ import pe.upc.limapathsbackend.payment.interfaces.rest.transform.PaymentResource
 */
 
 @RestController
-@RequestMapping(value = "/api/v1/payment")
+@RequestMapping(value = "/api/v1/payments")
 @Tag( name = "Payments", description = "Payments Management Endpoints")
 public class PaymentController {
 
@@ -49,5 +53,14 @@ public class PaymentController {
 
         var paymentResource =  PaymentResourceFromEntityAssembler.transformResourceFromEntity(payment.get());
         return new ResponseEntity<PaymentResource>(paymentResource, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Payment>> getAllPayments(){
+        var payments = paymentQueryService.handle(new GetAllPaymentsQuery());
+        if (payments.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(payments);
     }
 }

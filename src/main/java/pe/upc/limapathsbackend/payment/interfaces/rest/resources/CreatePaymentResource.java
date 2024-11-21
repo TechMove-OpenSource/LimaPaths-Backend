@@ -1,7 +1,5 @@
 package pe.upc.limapathsbackend.payment.interfaces.rest.resources;
 
-import jakarta.validation.constraints.NotBlank;
-
 public record CreatePaymentResource(
         String busName,
         String originStop,

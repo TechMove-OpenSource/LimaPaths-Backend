@@ -2,12 +2,14 @@ package pe.upc.limapathsbackend.payment.application.services;
 
 import org.springframework.stereotype.Service;
 import pe.upc.limapathsbackend.payment.domain.model.aggregates.Payment;
+import pe.upc.limapathsbackend.payment.domain.model.queries.GetAllPaymentsQuery;
 import pe.upc.limapathsbackend.payment.domain.model.queries.GetPaymentByBusNameQuery;
 import pe.upc.limapathsbackend.payment.domain.model.queries.GetPaymentByIdQuery;
 import pe.upc.limapathsbackend.payment.domain.model.queries.GetPaymentByTicketAmountQuery;
 import pe.upc.limapathsbackend.payment.domain.services.PaymentQueryService;
 import pe.upc.limapathsbackend.payment.infraestructure.persistence.jpa.repositories.PaymentRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,7 +34,11 @@ public class PaymentQueryServiceImpl implements PaymentQueryService {
 
     @Override
     public Optional<Payment> handle(GetPaymentByBusNameQuery query) {
-        String busName = query.busName().getFullBusName(); // O usa query.busName().busName() si es más directo
-        return paymentRepository.findByBus_BusName(busName);
+        return paymentRepository.findByBus_BusName(query.busName());
+    }
+
+    @Override
+    public List<Payment> handle(GetAllPaymentsQuery query) {
+        return paymentRepository.findAll();
     }
 }
